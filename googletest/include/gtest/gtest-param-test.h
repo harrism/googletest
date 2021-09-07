@@ -404,34 +404,37 @@ internal::CartesianProductHolder<Generator...> Combine(const Generator&... g) {
   return internal::CartesianProductHolder<Generator...>(g...);
 }
 
-#define TEST_P(test_suite_name, test_name)                                     \
-  class GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)                     \
-      : public test_suite_name {                                               \
-   public:                                                                     \
-    GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() {}                    \
-    void TestBody() override;                                                  \
-                                                                               \
-   private:                                                                    \
-    static int AddToRegistry() {                                               \
-      ::testing::UnitTest::GetInstance()                                       \
-          ->parameterized_test_registry()                                      \
-          .GetTestSuitePatternHolder<test_suite_name>(                         \
-              GTEST_STRINGIFY_(test_suite_name),                               \
-              ::testing::internal::CodeLocation(__FILE__, __LINE__))           \
-          ->AddTestPattern(                                                    \
-              GTEST_STRINGIFY_(test_suite_name), GTEST_STRINGIFY_(test_name),  \
-              new ::testing::internal::TestMetaFactory<GTEST_TEST_CLASS_NAME_( \
-                  test_suite_name, test_name)>(),                              \
-              ::testing::internal::CodeLocation(__FILE__, __LINE__));          \
-      return 0;                                                                \
-    }                                                                          \
-    static int gtest_registering_dummy_ GTEST_ATTRIBUTE_UNUSED_;               \
-    GTEST_DISALLOW_COPY_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,    \
-                                                           test_name));        \
-  };                                                                           \
-  int GTEST_TEST_CLASS_NAME_(test_suite_name,                                  \
-                             test_name)::gtest_registering_dummy_ =            \
-      GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)::AddToRegistry();     \
+#define TEST_P(test_suite_name, test_name)                                                \
+  class GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)                                \
+      : public test_suite_name {                                                          \
+   public:                                                                                \
+    GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() {}                               \
+    ~GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() override = default;             \
+    void TestBody() override;                                                             \
+                                                                                          \
+   private:                                                                               \
+    static int AddToRegistry() {                                                          \
+      ::testing::UnitTest::GetInstance()                                                  \
+          ->parameterized_test_registry()                                                 \
+          .GetTestSuitePatternHolder<test_suite_name>(                                    \
+              GTEST_STRINGIFY_(test_suite_name),                                          \
+              ::testing::internal::CodeLocation(__FILE__, __LINE__))                      \
+          ->AddTestPattern(                                                               \
+              GTEST_STRINGIFY_(test_suite_name), GTEST_STRINGIFY_(test_name),             \
+              new ::testing::internal::TestMetaFactory<GTEST_TEST_CLASS_NAME_( /*NOLINT*/ \
+                  test_suite_name, test_name)>(),                                         \
+              ::testing::internal::CodeLocation(__FILE__, __LINE__));                     \
+      return 0;                                                                           \
+    }                                                                                     \
+    static int gtest_registering_dummy_ GTEST_ATTRIBUTE_UNUSED_;     /*NOLINT*/           \
+    GTEST_DISALLOW_COPY_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,               \
+                                                           test_name));                   \
+    GTEST_DISALLOW_MOVE_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,               \
+                                                           test_name));                   \
+  };                                                                                      \
+  int GTEST_TEST_CLASS_NAME_(test_suite_name,                                             \
+                             test_name)::gtest_registering_dummy_ =  /*NOLINT*/           \
+      GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)::AddToRegistry();                \
   void GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)::TestBody()
 
 // The last argument to INSTANTIATE_TEST_SUITE_P allows the user to specify
@@ -463,7 +466,7 @@ internal::CartesianProductHolder<Generator...> Combine(const Generator&... g) {
           __VA_ARGS__,                                                        \
           ::testing::internal::DefaultParamName<test_suite_name::ParamType>,  \
           DUMMY_PARAM_)));                                                    \
-      auto t = std::make_tuple(__VA_ARGS__);                                  \
+      auto t = std::make_tuple(__VA_ARGS__);  /*NOLINT*/                      \
       static_assert(std::tuple_size<decltype(t)>::value <= 2,                 \
                     "Too Many Args!");                                        \
     }                                                                         \
@@ -472,7 +475,7 @@ internal::CartesianProductHolder<Generator...> Combine(const Generator&... g) {
         ::testing::internal::DefaultParamName<test_suite_name::ParamType>,    \
         DUMMY_PARAM_))))(info);                                               \
   }                                                                           \
-  static int gtest_##prefix##test_suite_name##_dummy_                         \
+  static int gtest_##prefix##test_suite_name##_dummy_   /*NOLINT*/            \
       GTEST_ATTRIBUTE_UNUSED_ =                                               \
           ::testing::UnitTest::GetInstance()                                  \
               ->parameterized_test_registry()                                 \
