@@ -1522,37 +1522,37 @@ class NeverThrown {
   test_suite_name##_##test_name##_Test
 
 // Helper macro for defining tests.
-#define GTEST_TEST_(test_suite_name, test_name, parent_class, parent_id)      \
-  static_assert(sizeof(GTEST_STRINGIFY_(test_suite_name)) > 1,                \
-                "test_suite_name must not be empty");                         \
-  static_assert(sizeof(GTEST_STRINGIFY_(test_name)) > 1,                      \
-                "test_name must not be empty");                               \
-  class GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)                    \
-      : public parent_class {                                                 \
-   public:                                                                    \
-    GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() = default;           \
-    ~GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() override = default; \
-    GTEST_DISALLOW_COPY_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,   \
-                                                           test_name));       \
-    GTEST_DISALLOW_MOVE_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,   \
-                                                           test_name));       \
-                                                                              \
-   private:                                                                   \
-    void TestBody() override;                                                 \
-    static ::testing::TestInfo* const test_info_ GTEST_ATTRIBUTE_UNUSED_;     \
-  };                                                                          \
-                                                                              \
-  ::testing::TestInfo* const GTEST_TEST_CLASS_NAME_(test_suite_name,          \
-                                                    test_name)::test_info_ =  \
-      ::testing::internal::MakeAndRegisterTestInfo(                           \
-          #test_suite_name, #test_name, nullptr, nullptr,                     \
-          ::testing::internal::CodeLocation(__FILE__, __LINE__), (parent_id), \
-          ::testing::internal::SuiteApiResolver<                              \
-              parent_class>::GetSetUpCaseOrSuite(__FILE__, __LINE__),         \
-          ::testing::internal::SuiteApiResolver<                              \
-              parent_class>::GetTearDownCaseOrSuite(__FILE__, __LINE__),      \
-          new ::testing::internal::TestFactoryImpl<GTEST_TEST_CLASS_NAME_(    \
-              test_suite_name, test_name)>);                                  \
+#define GTEST_TEST_(test_suite_name, test_name, parent_class, parent_id)                 \
+  static_assert(sizeof(GTEST_STRINGIFY_(test_suite_name)) > 1,                           \
+                "test_suite_name must not be empty");                                    \
+  static_assert(sizeof(GTEST_STRINGIFY_(test_name)) > 1,                                 \
+                "test_name must not be empty");                                          \
+  class GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)                               \
+      : public parent_class {                                                            \
+   public:                                                                               \
+    GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() = default;                      \
+    ~GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)() override = default;            \
+    GTEST_DISALLOW_COPY_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,              \
+                                                           test_name));                  \
+    GTEST_DISALLOW_MOVE_AND_ASSIGN_(GTEST_TEST_CLASS_NAME_(test_suite_name,              \
+                                                           test_name));                  \
+                                                                                         \
+   private:                                                                              \
+    void TestBody() override;                                                            \
+    static ::testing::TestInfo* const test_info_ GTEST_ATTRIBUTE_UNUSED_;     /*NOLINT*/ \
+  };                                                                                     \
+                                                                                         \
+  ::testing::TestInfo* const GTEST_TEST_CLASS_NAME_(test_suite_name,                     \
+                                                    test_name)::test_info_ =  /*NOLINT*/ \
+      ::testing::internal::MakeAndRegisterTestInfo(                                      \
+          #test_suite_name, #test_name, nullptr, nullptr,                                \
+          ::testing::internal::CodeLocation(__FILE__, __LINE__), (parent_id),            \
+          ::testing::internal::SuiteApiResolver<                                         \
+              parent_class>::GetSetUpCaseOrSuite(__FILE__, __LINE__),                    \
+          ::testing::internal::SuiteApiResolver<                                         \
+              parent_class>::GetTearDownCaseOrSuite(__FILE__, __LINE__),                 \
+          new ::testing::internal::TestFactoryImpl<GTEST_TEST_CLASS_NAME_(    /*NOLINT*/ \
+              test_suite_name, test_name)>);                                             \
   void GTEST_TEST_CLASS_NAME_(test_suite_name, test_name)::TestBody()
 
 #endif  // GOOGLETEST_INCLUDE_GTEST_INTERNAL_GTEST_INTERNAL_H_
